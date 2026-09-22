@@ -1,10 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
+import 'package:laundry_booking_app/core/di/service_locator.dart';
 import 'package:laundry_booking_app/core/networking/api_constants.dart';
 import 'package:laundry_booking_app/core/networking/api_error_handler.dart';
 import 'package:laundry_booking_app/core/networking/api_result.dart';
+import 'package:laundry_booking_app/core/utils/app_constants.dart';
+import 'package:laundry_booking_app/core/utils/local_storage.dart';
 import 'package:laundry_booking_app/feature/register/data/model/register_request_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+@LazySingleton()
 class RegisterRepo {
   final Dio _dio;
   RegisterRepo(this._dio);
@@ -16,15 +20,15 @@ class RegisterRepo {
         ApiConstants.register,
         data: registerModel.toJson(),
       );
-      saveToken(response.data['data']['token']);
-      return Success(response.data['message']);
+      return Success(response.data);
     } on DioException catch (e) {
       return Error(ApiErrorHandler.handle(e).message);
+    } catch (e) {
+      return Error(e.toString());
     }
   }
 
-  saveToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
+  Future<void> saveToken(String token) async {
+    getIt<LocalStorage>().setString(key: AppConstants.token, value: token);
   }
 }

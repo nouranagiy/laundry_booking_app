@@ -12,7 +12,7 @@ class AppRouter {
       case AppRoutes.registerScreen:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (context) => RegisterCubit(getIt()),
+            create: (context) => getIt<RegisterCubit>(),
             child: const RegisterScreen(),
           ),
         );
@@ -21,9 +21,7 @@ class AppRouter {
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
+            body: Center(child: Text('No route defined for ${settings.name}')),
           ),
         );
     }

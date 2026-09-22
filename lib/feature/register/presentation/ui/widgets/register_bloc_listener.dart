@@ -6,14 +6,12 @@ import 'package:laundry_booking_app/feature/register/presentation/cubit/register
 
 class RegisterBlocListener extends StatelessWidget {
   final Widget child;
-
   const RegisterBlocListener({super.key, required this.child});
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<RegisterCubit, RegisterState>(
-      listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
+        print('Current Status is: ${state.status}');
         if (state.status == Status.loading) {
           showDialog(
             context: context,
@@ -22,9 +20,7 @@ class RegisterBlocListener extends StatelessWidget {
                 const Center(child: CircularProgressIndicator()),
           );
         } else if (state.status == Status.success) {
-          // Close loading dialog
-          Navigator.of(context).pop();
-
+          Navigator.of(context, rootNavigator: true).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message ?? 'Registration successful!'),
@@ -32,12 +28,9 @@ class RegisterBlocListener extends StatelessWidget {
             ),
           );
 
-          // Navigate to login
           Navigator.of(context).pushReplacementNamed(AppRoutes.homeScreen);
         } else if (state.status == Status.error) {
-          // Close loading dialog
-          Navigator.of(context).pop();
-
+          Navigator.of(context, rootNavigator: true).pop();
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
